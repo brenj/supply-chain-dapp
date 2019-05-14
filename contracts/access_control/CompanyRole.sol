@@ -1,48 +1,43 @@
 pragma solidity ^0.4.24;
 
-// Import the library 'Roles'
 import "./Roles.sol";
 
-// Define a contract 'ConsumerRole' to manage this role - add, remove, check
-contract ConsumerRole {
+contract CompanyRole {
+    using Roles for Roles.Role;
 
-  // Define 2 events, one for Adding, and other for Removing
+    event CompanyAdded(address newCompany);
+    event CompanyRemoved(address company);
 
-  // Define a struct 'consumers' by inheriting from 'Roles' library, struct Role
+    Roles.Role private companies;
 
-  // In the constructor make the address that deploys this contract the 1st consumer
-  constructor() public {
-    
-  }
+    constructor() public {
+        _addCompany(msg.sender);
+    }
 
-  // Define a modifier that checks to see if msg.sender has the appropriate role
-  modifier onlyConsumer() {
-    
-    _;
-  }
+    modifier onlyCompany() {
+        require(isCompany(msg.sender), 'Only a company can do this');
+        _;
+    }
 
-  // Define a function 'isConsumer' to check this role
-  function isConsumer(address account) public view returns (bool) {
-    
-  }
+    function isCompany(address account) public view returns (bool) {
+        return companies.has(account);
+    }
 
-  // Define a function 'addConsumer' that adds this role
-  function addConsumer(address account) public onlyConsumer {
-    
-  }
+    function addCompany(address account) public onlyCompany {
+        _addCompany(account);
+    }
 
-  // Define a function 'renounceConsumer' to renounce this role
-  function renounceConsumer() public {
-    
-  }
+    function renounceCompany() public {
+        _removeCompany(msg.sender);
+    }
 
-  // Define an internal function '_addConsumer' to add this role, called by 'addConsumer'
-  function _addConsumer(address account) internal {
-    
-  }
+    function _addCompany(address account) internal {
+        companies.add(account);
+        emit CompanyAdded(account);
+    }
 
-  // Define an internal function '_removeConsumer' to remove this role, called by 'removeConsumer'
-  function _removeConsumer(address account) internal {
-    
-  }
+    function _removeCompany(address account) internal {
+        companies.remove(account);
+        emit CompanyRemoved(account);
+    }
 }
