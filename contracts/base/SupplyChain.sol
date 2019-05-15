@@ -187,6 +187,12 @@ contract SupplyChain is CompanyRole, ManufacturerRole {
     emit Packaged(_upc);
   }
 
+  function listItem(uint _upc) public onlyManufacturer packaged(_upc) {
+    Item storage product = items[_upc];
+    product.itemState = State.ForSale;
+    emit ForSale(_upc);
+  }
+
   // // Define a function 'packItem' that allows a farmer to mark an item 'Packed'
   // function packItem(uint _upc) public 
   // // Call modifier to check if upc has passed previous supply chain stage
