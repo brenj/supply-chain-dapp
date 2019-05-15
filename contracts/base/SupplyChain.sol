@@ -1,6 +1,9 @@
 pragma solidity ^0.4.24;
 
-contract SupplyChain {
+import '../access_control/CompanyRole.sol';
+import '../access_control/ManufacturerRole.sol';
+
+contract SupplyChain is CompanyRole, ManufacturerRole {
 
   address owner;
   uint upc;
@@ -140,6 +143,7 @@ contract SupplyChain {
       uint _productPrice
   )
     public
+    onlyCompany
   {
     Item memory product;
     product.upc = _upc;
@@ -163,6 +167,7 @@ contract SupplyChain {
       string _manufacturerLongitude
   )
     public
+    onlyManufacturer
     designed(_upc)
   {
     Item storage product = items[_upc];
