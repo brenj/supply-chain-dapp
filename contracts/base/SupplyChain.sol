@@ -154,20 +154,27 @@ contract SupplyChain {
     emit Designed(_upc);
   }
 
-  // function manufactureItem(
-  //     uint _upc,
-  //     address _manufactureID,
-  //     string _manufacturerName,
-  //     string _manufacturerInformation,
-  //     string _manufacturerLatitude,
-  //     string _manufacturerLongitude,
-  //     string _productNotes
-  // )
-  //   public
-  // {
-  //   // Update the appropriate fields
-  //   // Emit the appropriate event
-  // }
+  function manufactureItem(
+      uint _upc,
+      address _manufacturerID,
+      string _manufacturerName,
+      string _manufacturerInformation,
+      string _manufacturerLatitude,
+      string _manufacturerLongitude
+  )
+    public
+    designed(_upc)
+  {
+    Item storage product = items[_upc];
+    product.manufacturerID = _manufacturerID;
+    product.manufacturerName = _manufacturerName;
+    product.manufacturerInformation = _manufacturerInformation;
+    product.manufacturerLatitude = _manufacturerLatitude;
+    product.manufacturerLongitude = _manufacturerLongitude;
+    product.itemState = State.Manufactured;
+
+    emit Manufactured(_upc);
+  }
 
   // // Define a function 'processtItem' that allows a farmer to mark an item 'Processed'
   // function processItem(uint _upc) public 
@@ -268,7 +275,7 @@ contract SupplyChain {
     
   // }
 
-  function fetchState(uint _upc) returns (State) {
+  function fetchState(uint _upc) public view returns (State) {
     Item memory product = items[_upc];
     return product.itemState;
   }
@@ -277,8 +284,6 @@ contract SupplyChain {
     public
     view
     returns (
-        uint,
-        uint,
         address,
         uint,
         string,
@@ -287,12 +292,31 @@ contract SupplyChain {
   {
     Item memory product = items[_upc];
     return (
-        product.upc,
-        product.sku,
         product.companyID,
         product.productID,
         product.productNotes,
         product.productPrice
+    );
+  }
+
+  function fetchManufacturerData(uint _upc)
+    public
+    view
+    returns (
+        address,
+        string,
+        string,
+        string,
+        string
+    )
+  {
+    Item memory product = items[_upc];
+    return (
+        product.manufacturerID,
+        product.manufacturerName,
+        product.manufacturerInformation,
+        product.manufacturerLatitude,
+        product.manufacturerLongitude
     );
   }
 
