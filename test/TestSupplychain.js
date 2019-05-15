@@ -78,16 +78,50 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'Packaged', 'Invalid event emitted');
     });
 
-    it("Testing listItem()", async() => {
+    it("Testing sellItem()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
-      let tx = await supplyChain.listItem(upc)
+      let tx = await supplyChain.sellItem(upc)
       let event = tx.logs[0].event;
 
       const productState = await supplyChain.fetchState.call(upc);
 
       assert.equal(productState, 3, 'Invalid item State');
       assert.equal(event, 'ForSale', 'Invalid event emitted');
+    });
+
+    it("Testing buyItem()", async() => {
+      const supplyChain = await SupplyChain.deployed();
+
+      let errorThrown;
+      const underpaidPrice = web3.toWei(.5, "ether")
+
+      try {
+        await supplyChain.buyItem(
+          upc, retailerID, productPrice,
+          {value: underpaidPrice, gasPrice: 0});
+      } catch (error) {
+        errorThrown = error;
+      }
+      assert.notEqual(
+        errorThrown, undefined,
+        'Revert error not thrown for not paying enough');
+      assert.isAbove(
+        errorThrown.message.search('Not Paid Enough'),
+        -1, 'Revert error not thrown for not paying enough');
+
+      const balanceBeforeTransaction = web3.eth.getBalance(ownerID);
+      let tx = await supplyChain.buyItem(
+        upc, retailerID, productPrice, {value: productPrice, gasPrice: 0});
+      const balanceAfterTransaction = web3.eth.getBalance(ownerID);
+      let event = tx.logs[0].event;
+
+      const productState = await supplyChain.fetchState.call(upc);
+
+      assert.equal(
+          balanceBeforeTransaction.sub(balanceAfterTransaction), productPrice);
+      assert.equal(productState, 4, 'Invalid item State');
+      assert.equal(event, 'Sold', 'Invalid event emitted');
     });
 
     // // 3rd Test

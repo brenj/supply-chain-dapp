@@ -2,8 +2,9 @@ pragma solidity ^0.4.24;
 
 import '../access_control/CompanyRole.sol';
 import '../access_control/ManufacturerRole.sol';
+import '../access_control/RetailerRole.sol';
 
-contract SupplyChain is CompanyRole, ManufacturerRole {
+contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole {
 
   address owner;
   uint upc;
@@ -72,7 +73,7 @@ contract SupplyChain is CompanyRole, ManufacturerRole {
   }
 
   modifier paidEnough(uint _price) { 
-    require(msg.value >= _price); 
+    require(msg.value >= _price, 'Not Paid Enough');
     _;
   }
   
@@ -187,57 +188,29 @@ contract SupplyChain is CompanyRole, ManufacturerRole {
     emit Packaged(_upc);
   }
 
-  function listItem(uint _upc) public onlyManufacturer packaged(_upc) {
+  function sellItem(uint _upc) public onlyManufacturer packaged(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.ForSale;
     emit ForSale(_upc);
   }
 
-  // // Define a function 'packItem' that allows a farmer to mark an item 'Packed'
-  // function packItem(uint _upc) public 
-  // // Call modifier to check if upc has passed previous supply chain stage
-  
-  // // Call modifier to verify caller of this function
-  
-  // {
-  //   // Update the appropriate fields
-    
-  //   // Emit the appropriate event
-    
-  // }
+  function buyItem(uint _upc, address _retailerID, uint _price)
+    public
+    onlyRetailer
+    forSale(_upc)
+    payable
+    paidEnough(_price)
+    checkValue(_upc)
+  {
+    Item storage product = items[_upc];
+    product.ownerID = _retailerID;
+    product.retailerID = _retailerID;
+    product.itemState = State.Sold;
 
-  // // Define a function 'sellItem' that allows a farmer to mark an item 'ForSale'
-  // function sellItem(uint _upc, uint _price) public 
-  // // Call modifier to check if upc has passed previous supply chain stage
-  
-  // // Call modifier to verify caller of this function
-  
-  // {
-  //   // Update the appropriate fields
-    
-  //   // Emit the appropriate event
-    
-  // }
+    _retailerID.transfer(_price);
 
-  // // Define a function 'buyItem' that allows the disributor to mark an item 'Sold'
-  // // Use the above defined modifiers to check if the item is available for sale, if the buyer has paid enough, 
-  // // and any excess ether sent is refunded back to the buyer
-  // function buyItem(uint _upc) public payable 
-  //   // Call modifier to check if upc has passed previous supply chain stage
-    
-  //   // Call modifer to check if buyer has paid enough
-    
-  //   // Call modifer to send any excess ether back to buyer
-    
-  //   {
-    
-  //   // Update the appropriate fields - ownerID, distributorID, itemState
-    
-  //   // Transfer money to farmer
-    
-  //   // emit the appropriate event
-    
-  // }
+    emit Sold(_upc);
+  }
 
   // // Define a function 'shipItem' that allows the distributor to mark an item 'Shipped'
   // // Use the above modifers to check if the item is sold
