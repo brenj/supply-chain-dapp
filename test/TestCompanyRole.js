@@ -9,12 +9,6 @@ contract('CompanyRole', function(accounts) {
   it("Testing CompanyRole", async() => {
     const companyRole = await CompanyRole.deployed();
 
-    let eventEmitted = false;
-    let event = companyRole.CompanyAdded();
-    event.watch((err, res) => {
-      eventEmitted = true;
-    });
-
     let errorThrown;
 
     try {
@@ -31,13 +25,13 @@ contract('CompanyRole', function(accounts) {
     assert.equal(
       await companyRole.isCompany(
         companyID), false, 'Shouldn\'t be a valid company');
-    await companyRole.addCompany(companyID, { from: ownerID });
+    let tx = await companyRole.addCompany(companyID, { from: ownerID });
     assert.equal(
       await companyRole.isCompany(
         companyID), true, 'Should be a valid company');
 
-    // TODO: Why doesn't this pass even though an event is emitted?
-    assert.equal(eventEmitted, true, 'Should have emitted an event');
+    let event = tx.logs[0].event
+    assert.equal(event, 'CompanyAdded', 'Should have emitted an event');
   });
 });
 
