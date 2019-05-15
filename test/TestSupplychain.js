@@ -66,6 +66,18 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'Manufactured', 'Invalid event emitted');
     });
 
+    it("Testing packageItem()", async() => {
+      const supplyChain = await SupplyChain.deployed();
+
+      let tx = await supplyChain.packageItem(upc)
+      let event = tx.logs[0].event;
+
+      const productState = await supplyChain.fetchState.call(upc);
+
+      assert.equal(productState, 2, 'Invalid item State');
+      assert.equal(event, 'Packaged', 'Invalid event emitted');
+    });
+
     // // 3rd Test
     // it("Testing smart contract function packItem() that allows a farmer to pack coffee", async() => {
     //     const supplyChain = await SupplyChain.deployed()

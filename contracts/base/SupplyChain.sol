@@ -181,18 +181,11 @@ contract SupplyChain is CompanyRole, ManufacturerRole {
     emit Manufactured(_upc);
   }
 
-  // // Define a function 'processtItem' that allows a farmer to mark an item 'Processed'
-  // function processItem(uint _upc) public 
-  // // Call modifier to check if upc has passed previous supply chain stage
-  
-  // // Call modifier to verify caller of this function
-  
-  // {
-  //   // Update the appropriate fields
-    
-  //   // Emit the appropriate event
-    
-  // }
+  function packageItem(uint _upc) public onlyManufacturer manufactured(_upc) {
+    Item storage product = items[_upc];
+    product.itemState = State.Packaged;
+    emit Packaged(_upc);
+  }
 
   // // Define a function 'packItem' that allows a farmer to mark an item 'Packed'
   // function packItem(uint _upc) public 
