@@ -3,8 +3,9 @@ pragma solidity ^0.4.24;
 import '../access_control/CompanyRole.sol';
 import '../access_control/ManufacturerRole.sol';
 import '../access_control/RetailerRole.sol';
+import '../access_control/ConsumerRole.sol';
 
-contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole {
+contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRole {
 
   address owner;
   uint upc;
@@ -119,6 +120,11 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole {
     _;
   }
 
+  modifier stocked(uint _upc) {
+    require(items[_upc].itemState == State.Stocked);
+    _;
+  }
+
   modifier purchased(uint _upc) {
     require(items[_upc].itemState == State.Purchased);
     _;
@@ -203,54 +209,58 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole {
     checkValue(_upc)
   {
     Item storage product = items[_upc];
+
+    // Store product owner before it's updated
+    address productOwner = product.ownerID;
+
     product.ownerID = _retailerID;
     product.retailerID = _retailerID;
     product.itemState = State.Sold;
 
-    _retailerID.transfer(_price);
+    productOwner.transfer(_price);
 
     emit Sold(_upc);
   }
 
-  // // Define a function 'shipItem' that allows the distributor to mark an item 'Shipped'
-  // // Use the above modifers to check if the item is sold
-  // function shipItem(uint _upc) public 
-  //   // Call modifier to check if upc has passed previous supply chain stage
-    
-  //   // Call modifier to verify caller of this function
-    
-  //   {
-  //   // Update the appropriate fields
-    
-  //   // Emit the appropriate event
-    
-  // }
+  function shipItem(uint _upc) public onlyManufacturer sold(_upc) {
+    Item storage product = items[_upc];
+    product.itemState = State.Shipped;
+    emit Shipped(_upc);
+  }
 
-  // // Define a function 'receiveItem' that allows the retailer to mark an item 'Received'
-  // // Use the above modifiers to check if the item is shipped
-  // function receiveItem(uint _upc) public 
-  //   // Call modifier to check if upc has passed previous supply chain stage
-    
-  //   // Access Control List enforced by calling Smart Contract / DApp
-  //   {
-  //   // Update the appropriate fields - ownerID, retailerID, itemState
-    
-  //   // Emit the appropriate event
-    
-  // }
+  function receiveItem(uint _upc) public onlyRetailer shipped(_upc) {
+    Item storage product = items[_upc];
+    product.productPrice = product.productPrice * 2;
+    product.itemState = State.Received;
+    emit Received(_upc);
+  }
 
-  // // Define a function 'purchaseItem' that allows the consumer to mark an item 'Purchased'
-  // // Use the above modifiers to check if the item is received
-  // function purchaseItem(uint _upc) public 
-  //   // Call modifier to check if upc has passed previous supply chain stage
-    
-  //   // Access Control List enforced by calling Smart Contract / DApp
-  //   {
-  //   // Update the appropriate fields - ownerID, consumerID, itemState
-    
-  //   // Emit the appropriate event
-    
-  // }
+  function stockItem(uint _upc) public onlyRetailer received(_upc) {
+    Item storage product = items[_upc];
+    product.itemState = State.Stocked;
+    emit Stocked(_upc);
+  }
+
+  function purchaseItem(uint _upc, address _consumerID, uint _price)
+    public
+    onlyConsumer
+    stocked(_upc)
+    payable
+    paidEnough(_price)
+    checkValue(_upc)
+  {
+    Item storage product = items[_upc];
+
+    // Store product owner before it's updated
+    address productOwner = product.ownerID;
+
+    product.ownerID = _consumerID;
+    product.itemState = State.Purchased;
+
+    productOwner.transfer(_price);
+
+    emit Purchased(_upc);
+  }
 
   function fetchState(uint _upc) public view returns (State) {
     Item memory product = items[_upc];
