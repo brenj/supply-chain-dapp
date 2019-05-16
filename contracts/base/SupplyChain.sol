@@ -306,35 +306,3 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
         product.manufacturerLongitude
     );
   }
-
-  // // Define a function 'fetchItemBufferTwo' that fetches the data
-  // function fetchItemBufferTwo(uint _upc) public view returns 
-  // (
-  // uint    itemSKU,
-  // uint    itemUPC,
-  // uint    productID,
-  // string  productNotes,
-  // uint    productPrice,
-  // uint    itemState,
-  // address distributorID,
-  // address retailerID,
-  // address consumerID
-  // ) 
-  // {
-  //   // Assign values to the 9 parameters
-  
-    
-  // return 
-  // (
-  // itemSKU,
-  // itemUPC,
-  // productID,
-  // productNotes,
-  // productPrice,
-  // itemState,
-  // distributorID,
-  // retailerID,
-  // consumerID
-  // );
-  // }
-}
