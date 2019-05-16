@@ -8,15 +8,12 @@ import '../access_control/ConsumerRole.sol';
 contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRole {
 
   address owner;
-  uint upc;
   uint sku;
+  uint upc;
 
   // upc -> Item
   mapping (uint => Item) items;
 
-  // upc -> TxHash
-  mapping (uint => string[]) itemsHistory;
-  
   enum State {
     Designed,     // 0
     Manufactured, // 1
@@ -65,11 +62,6 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
 
   modifier onlyOwner() {
     require(msg.sender == owner);
-    _;
-  }
-
-  modifier verifyCaller (address _address) {
-    require(msg.sender == _address); 
     _;
   }
 
@@ -136,10 +128,8 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
     upc = 1;
   }
 
-  function kill() public {
-    if (msg.sender == owner) {
-      selfdestruct(owner);
-    }
+  function kill() public onlyOwner {
+    selfdestruct(owner);
   }
 
   function designItem(
@@ -306,3 +296,4 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
         product.manufacturerLongitude
     );
   }
+}
