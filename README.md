@@ -1,5 +1,5 @@
-Toy Supply Chain
-================
+ToyChain
+========
 
 About
 -----
@@ -12,6 +12,15 @@ From Udacity:
 
 Supporting courses:
 * Architecture
+
+`ToyChain` is a decentralized application used to track toys through the supply chain; from design to consumer purchase. A Toy and Board Game company like Hasbro was what I had in mind when developing this example Dapp, however it's generic enough to be applied to other industries as well. Typically there would be a distributor in between the manufacturer and retailer, but for simplicity I make the assumption that the manufacturer can also sell and ship to retailers.
+
+UML Diagrams
+------------
+* [Activity]()
+* [Sequence]()
+* [State]()
+* [Data Model (Class)]()
 
 Deployment to Rinkeby
 ---------------------
