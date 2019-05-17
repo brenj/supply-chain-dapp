@@ -132,7 +132,7 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
     selfdestruct(owner);
   }
 
-  function designItem(
+  function designToy(
       uint _upc,
       address _companyID,
       uint _productID,
@@ -155,7 +155,7 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
     emit Designed(_upc);
   }
 
-  function manufactureItem(
+  function manufactureToy(
       uint _upc,
       address _manufacturerID,
       string _manufacturerName,
@@ -178,19 +178,19 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
     emit Manufactured(_upc);
   }
 
-  function packageItem(uint _upc) public onlyManufacturer manufactured(_upc) {
+  function packageToy(uint _upc) public onlyManufacturer manufactured(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.Packaged;
     emit Packaged(_upc);
   }
 
-  function sellItem(uint _upc) public onlyManufacturer packaged(_upc) {
+  function sellToy(uint _upc) public onlyManufacturer packaged(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.ForSale;
     emit ForSale(_upc);
   }
 
-  function buyItem(uint _upc, address _retailerID, uint _price)
+  function buyToy(uint _upc, address _retailerID, uint _price)
     public
     onlyRetailer
     forSale(_upc)
@@ -212,26 +212,26 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
     emit Sold(_upc);
   }
 
-  function shipItem(uint _upc) public onlyManufacturer sold(_upc) {
+  function shipToy(uint _upc) public onlyManufacturer sold(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.Shipped;
     emit Shipped(_upc);
   }
 
-  function receiveItem(uint _upc) public onlyRetailer shipped(_upc) {
+  function receiveToy(uint _upc) public onlyRetailer shipped(_upc) {
     Item storage product = items[_upc];
     product.productPrice = product.productPrice * 2;
     product.itemState = State.Received;
     emit Received(_upc);
   }
 
-  function stockItem(uint _upc) public onlyRetailer received(_upc) {
+  function stockToy(uint _upc) public onlyRetailer received(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.Stocked;
     emit Stocked(_upc);
   }
 
-  function purchaseItem(uint _upc, address _consumerID, uint _price)
+  function purchaseToy(uint _upc, address _consumerID, uint _price)
     public
     onlyConsumer
     stocked(_upc)

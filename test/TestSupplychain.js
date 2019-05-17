@@ -18,10 +18,10 @@ contract('SupplyChain', function(accounts) {
     const productNotes = "Magic: The Gathering, War of the Spark Booster Box"
     const productPrice = web3.toWei(1, "ether")
 
-    it("Testing designItem()", async() => {
+    it("Testing designToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
-      let tx = await supplyChain.designItem(
+      let tx = await supplyChain.designToy(
         upc, companyID, productID, productNotes, productPrice);
       let event = tx.logs[0].event;
 
@@ -36,10 +36,10 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'Designed', 'Invalid event emitted');
     });
 
-    it("Testing manufactureItem()", async() => {
+    it("Testing manufactureToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
-      let tx = await supplyChain.manufactureItem(
+      let tx = await supplyChain.manufactureToy(
         upc, manufacturerID, manufacturerName,
         manufacturerInformation, manufacturerLatitude, manufacturerLongitude);
       let event = tx.logs[0].event;
@@ -65,10 +65,10 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'Manufactured', 'Invalid event emitted');
     });
 
-    it("Testing packageItem()", async() => {
+    it("Testing packageToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
-      let tx = await supplyChain.packageItem(upc)
+      let tx = await supplyChain.packageToy(upc)
       let event = tx.logs[0].event;
 
       const productState = await supplyChain.fetchState.call(upc);
@@ -77,10 +77,10 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'Packaged', 'Invalid event emitted');
     });
 
-    it("Testing sellItem()", async() => {
+    it("Testing sellToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
-      let tx = await supplyChain.sellItem(upc)
+      let tx = await supplyChain.sellToy(upc)
       let event = tx.logs[0].event;
 
       const productState = await supplyChain.fetchState.call(upc);
@@ -89,14 +89,14 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'ForSale', 'Invalid event emitted');
     });
 
-    it("Testing buyItem()", async() => {
+    it("Testing buyToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
       let errorThrown;
       const underpaidPrice = web3.toWei(.5, "ether")
 
       try {
-        await supplyChain.buyItem(
+        await supplyChain.buyToy(
           upc, retailerID, productPrice,
           {value: underpaidPrice, gasPrice: 0});
       } catch (error) {
@@ -110,7 +110,7 @@ contract('SupplyChain', function(accounts) {
         -1, 'Revert error not thrown for not paying enough');
 
       const balanceBeforeTransaction = web3.eth.getBalance(ownerID);
-      let tx = await supplyChain.buyItem(
+      let tx = await supplyChain.buyToy(
         upc, retailerID, productPrice, {value: productPrice, gasPrice: 0});
       const balanceAfterTransaction = web3.eth.getBalance(ownerID);
       let event = tx.logs[0].event;
@@ -123,10 +123,10 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'Sold', 'Invalid event emitted');
     });
 
-    it("Testing shippedItem()", async() => {
+    it("Testing shippedToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
-      let tx = await supplyChain.shipItem(upc)
+      let tx = await supplyChain.shipToy(upc)
       let event = tx.logs[0].event;
 
       const productState = await supplyChain.fetchState.call(upc);
@@ -135,10 +135,10 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'Shipped', 'Invalid event emitted');
     });
 
-    it("Testing receiveItem()", async() => {
+    it("Testing receiveToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
-      let tx = await supplyChain.receiveItem(upc)
+      let tx = await supplyChain.receiveToy(upc)
       let event = tx.logs[0].event;
 
       const productState = await supplyChain.fetchState.call(upc);
@@ -147,10 +147,10 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'Received', 'Invalid event emitted');
     });
 
-    it("Testing stockItem()", async() => {
+    it("Testing stockToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
-      let tx = await supplyChain.stockItem(upc)
+      let tx = await supplyChain.stockToy(upc)
       let event = tx.logs[0].event;
 
       const productState = await supplyChain.fetchState.call(upc);
@@ -159,7 +159,7 @@ contract('SupplyChain', function(accounts) {
       assert.equal(event, 'Stocked', 'Invalid event emitted');
     });
 
-    it("Testing purchaseItem()", async() => {
+    it("Testing purchaseToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
       const consumerPrice = productPrice * 2;
 
@@ -167,7 +167,7 @@ contract('SupplyChain', function(accounts) {
       const underpaidPrice = web3.toWei(1, "ether")
 
       try {
-        await supplyChain.purchaseItem(
+        await supplyChain.purchaseToy(
           upc, consumerID, consumerPrice,
           {value: underpaidPrice, gasPrice: 0});
       } catch (error) {
@@ -181,7 +181,7 @@ contract('SupplyChain', function(accounts) {
         -1, 'Revert error not thrown for not paying enough');
 
       const balanceBeforeTransaction = web3.eth.getBalance(ownerID);
-      let tx = await supplyChain.purchaseItem(
+      let tx = await supplyChain.purchaseToy(
         upc, consumerID, consumerPrice, {value: consumerPrice, gasPrice: 0});
       const balanceAfterTransaction = web3.eth.getBalance(ownerID);
       let event = tx.logs[0].event;
