@@ -4,10 +4,10 @@ import '../access_control/CompanyRole.sol';
 import '../access_control/ManufacturerRole.sol';
 import '../access_control/RetailerRole.sol';
 import '../access_control/ConsumerRole.sol';
+import '../core/Ownable.sol';
 
-contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRole {
+contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, ConsumerRole {
 
-  address owner;
   uint sku;
   uint upc;
 
@@ -59,11 +59,6 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
   event Received(uint upc);
   event Stocked(uint upc);
   event Purchased(uint upc);
-
-  modifier onlyOwner() {
-    require(msg.sender == owner);
-    _;
-  }
 
   modifier paidEnough(uint _price) { 
     require(msg.value >= _price, 'Not Paid Enough');
@@ -123,13 +118,12 @@ contract SupplyChain is CompanyRole, ManufacturerRole, RetailerRole, ConsumerRol
   }
 
   constructor() public payable {
-    owner = msg.sender;
     sku = 1;
     upc = 1;
   }
 
   function kill() public onlyOwner {
-    selfdestruct(owner);
+    selfdestruct(owner());
   }
 
   function designToy(
