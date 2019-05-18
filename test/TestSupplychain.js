@@ -1,8 +1,8 @@
 var SupplyChain = artifacts.require('SupplyChain')
 
 contract('SupplyChain', function(accounts) {
-    var sku = 1
-    var upc = 1
+    var sku = 'MTG-BOX-G123-WSP'
+    var upc = '042100005264'
 
     const productID = 12345
     const ownerID = accounts[0]
@@ -22,7 +22,7 @@ contract('SupplyChain', function(accounts) {
       const supplyChain = await SupplyChain.deployed();
 
       let tx = await supplyChain.designToy(
-        upc, companyID, productID, productNotes, productPrice);
+        upc, sku, companyID, productID, productNotes, productPrice);
       let event = tx.logs[0].event;
 
       const productData = await supplyChain.fetchProductData.call(upc);

@@ -8,11 +8,8 @@ import '../core/Ownable.sol';
 
 contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, ConsumerRole {
 
-  uint sku;
-  uint upc;
-
   // upc -> Item
-  mapping (uint => Item) items;
+  mapping (string => Item) items;
 
   enum State {
     Designed,     // 0
@@ -29,8 +26,8 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
   State constant defaultState = State.Designed;
 
   struct Item {
-    uint sku;
-    uint upc;
+    string sku;
+    string upc;
 
     address ownerID;
     address companyID;
@@ -50,76 +47,74 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
     State itemState;
   }
 
-  event Designed(uint upc);
-  event Manufactured(uint upc);
-  event Packaged(uint upc);
-  event ForSale(uint upc);
-  event Sold(uint upc);
-  event Shipped(uint upc);
-  event Received(uint upc);
-  event Stocked(uint upc);
-  event Purchased(uint upc);
+  event Designed(string upc);
+  event Manufactured(string upc);
+  event Packaged(string upc);
+  event ForSale(string upc);
+  event Sold(string upc);
+  event Shipped(string upc);
+  event Received(string upc);
+  event Stocked(string upc);
+  event Purchased(string upc);
 
   modifier paidEnough(uint _price) { 
     require(msg.value >= _price, 'Not Paid Enough');
     _;
   }
   
-  modifier checkValue(uint _upc) {
+  modifier checkValue(string _upc) {
     _;
     uint _price = items[_upc].productPrice;
     uint amountToReturn = msg.value - _price;
     items[_upc].consumerID.transfer(amountToReturn);
   }
 
-  modifier designed(uint _upc) {
+  modifier designed(string _upc) {
     require(items[_upc].itemState == State.Designed);
     _;
   }
 
-  modifier manufactured(uint _upc) {
+  modifier manufactured(string _upc) {
     require(items[_upc].itemState == State.Manufactured);
     _;
   }
   
-  modifier packaged(uint _upc) {
+  modifier packaged(string _upc) {
     require(items[_upc].itemState == State.Packaged);
     _;
   }
 
-  modifier forSale(uint _upc) {
+  modifier forSale(string _upc) {
     require(items[_upc].itemState == State.ForSale);
     _;
   }
 
-  modifier sold(uint _upc) {
+  modifier sold(string _upc) {
     require(items[_upc].itemState == State.Sold);
     _;
   }
   
-  modifier shipped(uint _upc) {
+  modifier shipped(string _upc) {
     require(items[_upc].itemState == State.Shipped);
     _;
   }
 
-  modifier received(uint _upc) {
+  modifier received(string _upc) {
     require(items[_upc].itemState == State.Received);
     _;
   }
 
-  modifier stocked(uint _upc) {
+  modifier stocked(string _upc) {
     require(items[_upc].itemState == State.Stocked);
     _;
   }
 
-  modifier purchased(uint _upc) {
+  modifier purchased(string _upc) {
     require(items[_upc].itemState == State.Purchased);
     _;
   }
 
   constructor() public payable {
-    sku = 1;
-    upc = 1;
   }
 
   function kill() public onlyOwner {
@@ -127,7 +122,8 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
   }
 
   function designToy(
-      uint _upc,
+      string _upc,
+      string _sku,
       address _companyID,
       uint _productID,
       string _productNotes,
@@ -138,19 +134,18 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
   {
     Item memory product;
     product.upc = _upc;
-    product.sku = sku;
+    product.sku = _sku;
     product.companyID = _companyID;
     product.productID = _productID;
     product.productNotes = _productNotes;
     product.productPrice = _productPrice;
 
-    sku += 1;
     items[_upc] = product;
     emit Designed(_upc);
   }
 
   function manufactureToy(
-      uint _upc,
+      string _upc,
       address _manufacturerID,
       string _manufacturerName,
       string _manufacturerInformation,
@@ -172,19 +167,19 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
     emit Manufactured(_upc);
   }
 
-  function packageToy(uint _upc) public onlyManufacturer manufactured(_upc) {
+  function packageToy(string _upc) public onlyManufacturer manufactured(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.Packaged;
     emit Packaged(_upc);
   }
 
-  function sellToy(uint _upc) public onlyManufacturer packaged(_upc) {
+  function sellToy(string _upc) public onlyManufacturer packaged(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.ForSale;
     emit ForSale(_upc);
   }
 
-  function buyToy(uint _upc, address _retailerID, uint _price)
+  function buyToy(string _upc, address _retailerID, uint _price)
     public
     onlyRetailer
     forSale(_upc)
@@ -206,26 +201,26 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
     emit Sold(_upc);
   }
 
-  function shipToy(uint _upc) public onlyManufacturer sold(_upc) {
+  function shipToy(string _upc) public onlyManufacturer sold(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.Shipped;
     emit Shipped(_upc);
   }
 
-  function receiveToy(uint _upc) public onlyRetailer shipped(_upc) {
+  function receiveToy(string _upc) public onlyRetailer shipped(_upc) {
     Item storage product = items[_upc];
     product.productPrice = product.productPrice * 2;
     product.itemState = State.Received;
     emit Received(_upc);
   }
 
-  function stockToy(uint _upc) public onlyRetailer received(_upc) {
+  function stockToy(string _upc) public onlyRetailer received(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.Stocked;
     emit Stocked(_upc);
   }
 
-  function purchaseToy(uint _upc, address _consumerID, uint _price)
+  function purchaseToy(string _upc, address _consumerID, uint _price)
     public
     onlyConsumer
     stocked(_upc)
@@ -246,12 +241,12 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
     emit Purchased(_upc);
   }
 
-  function fetchState(uint _upc) public view returns (State) {
+  function fetchState(string _upc) public view returns (State) {
     Item memory product = items[_upc];
     return product.itemState;
   }
 
-  function fetchProductData(uint _upc)
+  function fetchProductData(string _upc)
     public
     view
     returns (
@@ -270,7 +265,7 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
     );
   }
 
-  function fetchManufacturerData(uint _upc)
+  function fetchManufacturerData(string _upc)
     public
     view
     returns (

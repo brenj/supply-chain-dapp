@@ -10,119 +10,121 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1 style="text-align: center;">ToyChain</h1>
+    <div class="container-title">
+        <h1>ToyChain</h1>
+        <p style="font-style: italic">Prove the authenticity of toys using the Ethereum blockchain</p>
         <hr>
-        <p style="text-align: center;">Prove the authenticity of toys using the Ethereum blockchain.</p>
     </div>
 
-    <div id="ftc-design">
-        <h2>Product Overview</h2>
+    <div id="ftc-design" class="container">
         <div class="form-group">
-            SKU
-            <br>
-            <input class="input-field" type="number" id="sku" name="sku" placeholder=1><br>
+            <h2>Toy Details</h2>
+            <br />
             UPC
             <br>
-            <input type="number" id="upc" name="upc" placeholder=1><br>
-            Current Owner ID
-            <br>
-            <input type="text" id="ownerID" name="ownerID" placeholder="0x99c289eb2aacec289631a5ddf62cf27a63d4494f" size="50"><br>
+            <input type="text" id="fetchUPC" name="fetchUPC" placeholder="042100005264"><br>
             <div class=button-div>
                 <button class="btn-fetchState" id="button" type="button" data-id="10">Fetch State</button>
                 <button class="btn-fetchProductData" id="button" type="button" data-id="11">Fetch Product Data</button>
                 <button class="btn-fetchManufacturerData" id="button" type="button" data-id="12">Fetch Manufacturer Data</button>
             </div>
+            <p id="fetchOutput" style="white-space: pre-line"></p>
         </div>
         <div class=form-break></div>
-        <h2>Company Details</h2>
         <div class="form-group">
+            <h2>Design Toy</h2>
+            <br />
+            UPC
+            <br>
+            <input type="text" id="designUPC" name="designUPC" placeholder="042100005264"><br>
+            SKU
+            <br>
+            <input type="text" id="designSKU" name="designSKU" placeholder="MTG-BOX-G123-WSP"><br>
             Company ID
             <br>
             <input type="text" id="companyID" name="companyID" placeholder="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
                 size="50"><br>
             Product ID
             <br>
-            <input type="number" id="productID" name="productID" placeholder="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
+            <input type="number" id="productID" name="productID" placeholder="100"
                 size="50"><br>
             Product Notes
             <br>
-            <input type="text" id="productNotes" name="productNotes" placeholder="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
+            <input type="text" id="productNotes" name="productNotes" placeholder="Magic: The Gathering, War of the Spark Booster Box"
                 size="50"><br>
             Product Price
             <br>
-            <input type="number" id="productPrice" name="productPrice" placeholder="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
-                size="50"><br>
+            <input type="number" id="productPrice" name="productPrice" placeholder="1"
+                size="50"> ETH<br>
             <button class="btn-design" id="button" type="button" data-id="1">Design</button>
+            <p id="designOutput" style="white-space: pre-line"></p>
         </div>
         <div class=form-break></div>
-        <h2>Manufacturer Details</h2>
         <div class="form-group">
+            <h2>Manufacturer Toy</h2>
+            <br>
+            UPC
+            <br>
+            <input type="number" id="manufactureUPC" name="manufactureUPC" placeholder=1><br>
             Manufacturer ID
             <br>
-            <input type="text" id="manufacturerID" name="manufacturerID" value="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
+            <input type="text" id="manufacturerID" name="manufacturerID" placeholder="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
                 size="50"><br>
             Manufacturer Name
             <br>
-            <input type="text" id="manufacturerName" name="manufacturerName" value="Cartamundi">
+            <input type="text" id="manufacturerName" name="manufacturerName" placeholder="Cartamundi">
             <br>
             Manufacturer Information
             <br>
-            <input type="text" id="manufacturerInformation" name="manufacturerInformation" value="Cartamundi East Longmeadow LLC"><br>
+            <input type="text" id="manufacturerInformation" name="manufacturerInformation" placeholder="Cartamundi East Longmeadow LLC"><br>
             Manufacturer Latitude
             <br>
-            <input type="text" id="manufacturerLatitude" name="manufacturerLatitude" value="-38.239770"><br>
+            <input type="text" id="manufacturerLatitude" name="manufacturerLatitude" placeholder="-38.239770"><br>
             Manufacturer Longitude
             <br>
-            <input type="text" id="manufacturerLongitude" name="manufacturerLongitude" value="144.341490"><br>
+            <input type="text" id="manufacturerLongitude" name="manufacturerLongitude" placeholder="144.341490"><br>
             <br>
             <button class="btn-manufacture" id="button" type="button" data-id="2">Manufacture</button>
             <button class="btn-package" id="button" type="button" data-id="3">Package</button>
             <button class="btn-forsale" id="button" type="button" data-id="4">Sell</button>
+            <button class="btn-ship" id="button" type="button" data-id="6">Ship</button>
+            <p id="manufacturerOutput" style="white-space: pre-line"></p>
         </div>
         <div class=form-break></div>
-        <!-- <h2>Product Details</h2> -->
-        <!-- <div class="form-group"> -->
-        <!--     Product Notes -->
-        <!--     <br> -->
-        <!--     <input type="text" id="productNotes" name="productNotes" value="Magic: The Gathering, War of the Spark Booster Box" size="60"><br> -->
-        <!--     Product Price -->
-        <!--     <br> -->
-        <!--     <input type="number" id="productPrice" name="productPrice" value=1> ETH<br> -->
-        <!--     Company ID -->
-        <!--     <br> -->
-        <!--     <input type="text" id="companyID" name="companyID" value="0xf1b1bcd24dad92303dd9fe78be639f7bcf9c238d" size="50"><br> -->
-        <!--     Manufacturer ID -->
-        <!--     <br> -->
-        <!--     <input type="text" id="manufacturerID" name="manufacturerID" value="0xf1b1bcd24dad92303dd9fe78be639f7bcf9c238d" -->
-        <!--         size="50"> -->
-        <!--     <br> -->
-        <!--     Retailer ID -->
-        <!--     <br> -->
-        <!--     <input type="text" id="retailerID" name="retailerID" value="0x0fb2bfefd526966c87efa19f6693d50971763fc2" -->
-        <!--         size="50"><br> -->
-        <!--     Consumer ID -->
-        <!--     <br> -->
-        <!--     <input type="text" id="consumerID" name="consumerID" value="0x5d777e9127b28fb119e81a6304278a0a21bef1c4" -->
-        <!--         size="50"><br> -->
-        <!--     <br> -->
-        <!--     <button class="btn-buy" id="button" type="button" data-id="5">Buy</button> -->
-        <!--     <button class="btn-ship" id="button" type="button" data-id="6">Ship</button> -->
-        <!--     <button class="btn-receive" id="button" type="button" data-id="7">Receive</button> -->
-        <!--     <button class="btn-stock" id="button" type="button" data-id="8"> Stock</button> -->
-        <!--     <button class="btn-purchase" id="button" type="button" data-id="9">Purchase</button> -->
-        <!-- </div> -->
-        <!-- <div class=form-break></div> -->
+        <div class="form-group">
+            <h2>Retailer Details</h2>
+            <br>
+            Product Notes
+            <br>
+            <input type="text" id="productNotes" name="productNotes" value="Magic: The Gathering, War of the Spark Booster Box" size="60"><br>
+            Product Price
+            <br>
+            <input type="number" id="productPrice" name="productPrice" value=1> ETH<br>
+            Company ID
+            <br>
+            <input type="text" id="companyID" name="companyID" value="0xf1b1bcd24dad92303dd9fe78be639f7bcf9c238d" size="50"><br>
+            Manufacturer ID
+            <br>
+            <input type="text" id="manufacturerID" name="manufacturerID" value="0xf1b1bcd24dad92303dd9fe78be639f7bcf9c238d"
+                size="50">
+            <br>
+            Retailer ID
+            <br>
+            <input type="text" id="retailerID" name="retailerID" value="0x0fb2bfefd526966c87efa19f6693d50971763fc2"
+                size="50"><br>
+            Consumer ID
+            <br>
+            <input type="text" id="consumerID" name="consumerID" value="0x5d777e9127b28fb119e81a6304278a0a21bef1c4"
+                size="50"><br>
+            <br>
+            <button class="btn-buy" id="button" type="button" data-id="5">Buy</button>
+            <button class="btn-receive" id="button" type="button" data-id="7">Receive</button>
+            <button class="btn-stock" id="button" type="button" data-id="8"> Stock</button>
+            <button class="btn-purchase" id="button" type="button" data-id="9">Purchase</button>
+            <p id="manufacturerOutput" style="white-space: pre-line"></p>
+        </div>
+        <div class=form-break></div>
         <hr>
-    </div>
-
-    <h2>Transaction History<span id="ftc-history"></span></h2>
-    <div>
-      <ul id="ftc-events">
-        <!-- Events will appear here from app.js -->
-      </ul>
-      <br>
-      <hr>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

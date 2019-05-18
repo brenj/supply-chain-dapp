@@ -2,7 +2,6 @@ App = {
     web3Provider: null,
     contracts: {},
     metamaskAccountID: "0x0000000000000000000000000000000000000000",
-    sku: 0,
     upc: 0,
     ownerID: "0x0000000000000000000000000000000000000000",
     companyID: "0x0000000000000000000000000000000000000000",
@@ -22,8 +21,10 @@ App = {
     },
 
     readForm: function () {
-        App.sku = $("#sku").val();
-        App.upc = $("#upc").val();
+        App.fetchUPC = $("#fetchUPC").val();
+        App.designUPC = $("#designUPC").val();
+        App.designSKU = $("#designSKU").val();
+        App.manufactureUPC = $("#manufactureUPC").val();
         App.ownerID = $("#ownerID").val();
         App.companyID = $("#companyID").val();
         App.productID = $("#productID").val();
@@ -36,22 +37,6 @@ App = {
         App.manufacturerLongitude = $("#manufacturerLongitude").val();
         App.productNotes = $("#productNotes").val();
         App.productPrice = $("#productPrice").val();
-
-        console.log(
-            App.sku,
-            App.upc,
-            App.ownerID, 
-            App.companyID, 
-            App.manufacturerID, 
-            App.retailerID, 
-            App.consumerID,
-            App.manufacturerName, 
-            App.manufacturerInformation, 
-            App.manufacturerLatitude, 
-            App.manufacturerLongitude, 
-            App.productNotes, 
-            App.productPrice
-        );
     },
 
     initWeb3: async function () {
@@ -107,12 +92,6 @@ App = {
             var SupplyChainArtifact = data;
             App.contracts.SupplyChain = TruffleContract(SupplyChainArtifact);
             App.contracts.SupplyChain.setProvider(App.web3Provider);
-            
-            App.fetchState();
-            App.fetchProductData();
-            App.fetchManufacturerData();
-            App.fetchEvents();
-
         });
 
         return App.bindEvents();
@@ -177,19 +156,35 @@ App = {
         var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-          console.log(App.upc, App.companyID, App.productID, App.productNotes, App.productPrice);
             return instance.designToy(
-                App.upc, 
+                App.designUPC, 
+                App.designSKU, 
                 App.companyID,
                 App.productID,
                 App.productNotes,
                 App.productPrice
             );
         }).then(function(result) {
-            $("#ftc-item").text(result);
+          designOutput = `
+            ✓ TOY DESIGNED
+            Transaction: ${result['logs'][0]['transactionHash']}
+          `;
+            $("#designOutput").text(designOutput);
             console.log('designToy',result);
         }).catch(function(err) {
+          designError = `
+            ✗ TOY NOT DESIGNED
+            See console logs for details
+          `;
+            $("#designOutput").text(designError);
             console.log(err.message);
+        }).finally(function() {
+            $("#designUPC").val('');
+            $("#designSKU").val('');
+            $("#companyID").val('');
+            $("#productID").val('');
+            $("#productNotes").val('');
+            $("#productPrice").val('');
         });
     },
 
@@ -309,15 +304,16 @@ App = {
     },
 
     fetchState: function () {
-    ///   event.preventDefault();
-    ///    var processId = parseInt($(event.target).data('id'));
-        App.upc = $('#upc').val();
-        console.log('upc',App.upc);
+        App.upc = $('#fetchUPC').val();
+        console.log('upc',App.fetchUPC);
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-          return instance.fetchState(App.upc);
+          return instance.fetchState(App.fetchUPC);
         }).then(function(result) {
-          $("#ftc-item").text(result);
+          output = `
+            Product State: ${result}
+          `;
+          $("#fetchOutput").text(output);
           console.log('fetchState', result);
         }).catch(function(err) {
           console.log(err.message);
@@ -325,13 +321,17 @@ App = {
     },
 
     fetchProductData: function () {
-    ///    event.preventDefault();
-    ///    var processId = parseInt($(event.target).data('id'));
-                        
         App.contracts.SupplyChain.deployed().then(function(instance) {
-          return instance.fetchProductData.call(App.upc);
+          return instance.fetchProductData.call(App.fetchUPC);
         }).then(function(result) {
-          $("#ftc-item").text(result);
+          let [companyID, productID, productNotes, productPrice] = result;
+          let output = `
+            Company ID: ${companyID}
+            Product ID: ${productID}
+            Product Notes: ${productNotes}
+            Product Price: ${productPrice} ETH
+            `
+          $("#fetchOutput").text(output);
           console.log('fetchProductData', result);
         }).catch(function(err) {
           console.log(err.message);
@@ -339,13 +339,18 @@ App = {
     },
 
     fetchManufacturerData: function () {
-    ///    event.preventDefault();
-    ///    var processId = parseInt($(event.target).data('id'));
-                        
         App.contracts.SupplyChain.deployed().then(function(instance) {
-          return instance.fetchManufacturerData.call(App.upc);
+          return instance.fetchManufacturerData.call(App.fetchUPC);
         }).then(function(result) {
-          $("#ftc-item").text(result);
+          let [manufacturerID, manufacturerName, manufacturerInformation, manufacturerLatitude, manufacturerLongitude] = result;
+          let output = `
+            Manufacturer ID: ${manufacturerID}
+            Manufacturer Name: ${manufacturerName}
+            Manufacturer Information: ${manufacturerInformation}
+            Manufacturer Latitude: ${manufacturerLatitude}
+            Manufacturer Longitude: ${manufacturerLongitude}
+            `
+          $("#fetchOutput").text(output);
           console.log('fetchManufacturerData', result);
         }).catch(function(err) {
           console.log(err.message);
