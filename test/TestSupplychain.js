@@ -1,43 +1,37 @@
 var SupplyChain = artifacts.require('SupplyChain')
 
 contract('SupplyChain', function(accounts) {
-    var sku = 'MTG-BOX-G123-WSP'
-    var upc = '042100005264'
-
-    const productID = 12345
+    const sku = 'MTG-BOX-G123-WSP'
+    const upc = '042100005264'
     const ownerID = accounts[0]
-    const companyID = accounts[1]
-    const manufacturerID = accounts[2]
-    const retailerID = accounts[3]
-    const consumerID = accounts[4]
-
-    const manufacturerName = "Cartamundi"
-    const manufacturerInformation = "Cartamundi East Longmeadow LLC"
-    const manufacturerLatitude = "-38.239770"
-    const manufacturerLongitude = "144.341490"
-    const productNotes = "Magic: The Gathering, War of the Spark Booster Box"
     const productPrice = web3.toWei(1, "ether")
 
     it("Testing designToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
+      const productID = 12345
+      const productNotes = "Magic: The Gathering, War of the Spark Booster Box"
 
       let tx = await supplyChain.designToy(
-        upc, sku, companyID, productID, productNotes, productPrice);
+        upc, sku, productID, productNotes, {from: ownerID});
       let event = tx.logs[0].event;
 
       const productData = await supplyChain.fetchProductData.call(upc);
       const productState = await supplyChain.fetchState.call(upc);
 
-      assert.equal(productData[0], companyID, 'Invalid companyID');
+      assert.equal(productData[0], ownerID, 'Invalid companyID');
       assert.equal(productData[1], productID, 'Invalid productID');
       assert.equal(productData[2], productNotes, 'Invalid productNotes');
-      assert.equal(productData[3], productPrice, 'Invalid productPrice');
       assert.equal(productState, 0, 'Invalid item State');
       assert.equal(event, 'Designed', 'Invalid event emitted');
     });
 
     it("Testing manufactureToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
+      const manufacturerID = accounts[2]
+      const manufacturerName = "Cartamundi"
+      const manufacturerInformation = "Cartamundi East Longmeadow LLC"
+      const manufacturerLatitude = "-38.239770"
+      const manufacturerLongitude = "144.341490"
 
       let tx = await supplyChain.manufactureToy(
         upc, manufacturerID, manufacturerName,
@@ -80,25 +74,24 @@ contract('SupplyChain', function(accounts) {
     it("Testing sellToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
 
-      let tx = await supplyChain.sellToy(upc)
+      let tx = await supplyChain.sellToy(upc, productPrice)
       let event = tx.logs[0].event;
 
+      const productData = await supplyChain.fetchProductData.call(upc);
       const productState = await supplyChain.fetchState.call(upc);
 
+      assert.equal(productData[3], productPrice, 'Invalid productPrice');
       assert.equal(productState, 3, 'Invalid item State');
       assert.equal(event, 'ForSale', 'Invalid event emitted');
     });
 
     it("Testing buyToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
-
-      let errorThrown;
       const underpaidPrice = web3.toWei(.5, "ether")
 
+      let errorThrown;
       try {
-        await supplyChain.buyToy(
-          upc, retailerID, productPrice,
-          {value: underpaidPrice, gasPrice: 0});
+        await supplyChain.buyToy(upc, {value: underpaidPrice, gasPrice: 0});
       } catch (error) {
         errorThrown = error;
       }
@@ -111,7 +104,7 @@ contract('SupplyChain', function(accounts) {
 
       const balanceBeforeTransaction = web3.eth.getBalance(ownerID);
       let tx = await supplyChain.buyToy(
-        upc, retailerID, productPrice, {value: productPrice, gasPrice: 0});
+        upc, {value: productPrice, gasPrice: 0});
       const balanceAfterTransaction = web3.eth.getBalance(ownerID);
       let event = tx.logs[0].event;
 
@@ -149,27 +142,29 @@ contract('SupplyChain', function(accounts) {
 
     it("Testing stockToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
+      const consumerPrice = productPrice * 2;
 
-      let tx = await supplyChain.stockToy(upc)
+      let tx = await supplyChain.stockToy(upc, consumerPrice)
       let event = tx.logs[0].event;
 
+      const productData = await supplyChain.fetchProductData.call(upc);
       const productState = await supplyChain.fetchState.call(upc);
 
+      assert.equal(productData[3], consumerPrice, 'Invalid productPrice');
       assert.equal(productState, 7, 'Invalid item State');
       assert.equal(event, 'Stocked', 'Invalid event emitted');
     });
 
     it("Testing purchaseToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
+      const consumerID = accounts[4]
       const consumerPrice = productPrice * 2;
-
-      let errorThrown;
       const underpaidPrice = web3.toWei(1, "ether")
 
+      let errorThrown;
       try {
         await supplyChain.purchaseToy(
-          upc, consumerID, consumerPrice,
-          {value: underpaidPrice, gasPrice: 0});
+          upc, {value: underpaidPrice, gasPrice: 0});
       } catch (error) {
         errorThrown = error;
       }
@@ -180,19 +175,19 @@ contract('SupplyChain', function(accounts) {
         errorThrown.message.search('Not Paid Enough'),
         -1, 'Revert error not thrown for not paying enough');
 
+      await supplyChain.addConsumer(consumerID);
       const balanceBeforeTransaction = web3.eth.getBalance(ownerID);
       let tx = await supplyChain.purchaseToy(
-        upc, consumerID, consumerPrice, {value: consumerPrice, gasPrice: 0});
+        upc, {from: consumerID, value: consumerPrice, gasPrice: 0});
       const balanceAfterTransaction = web3.eth.getBalance(ownerID);
       let event = tx.logs[0].event;
 
       const productState = await supplyChain.fetchState.call(upc);
 
       assert.equal(
-        balanceBeforeTransaction.sub(balanceAfterTransaction),
+        balanceAfterTransaction.sub(balanceBeforeTransaction),
         consumerPrice);
       assert.equal(productState, 8, 'Invalid item State');
       assert.equal(event, 'Purchased', 'Invalid event emitted');
     });
 });
-

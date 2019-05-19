@@ -124,10 +124,8 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
   function designToy(
       string _upc,
       string _sku,
-      address _companyID,
       uint _productID,
-      string _productNotes,
-      uint _productPrice
+      string _productNotes
   )
     public
     onlyCompany
@@ -135,10 +133,9 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
     Item memory product;
     product.upc = _upc;
     product.sku = _sku;
-    product.companyID = _companyID;
+    product.companyID = msg.sender;
     product.productID = _productID;
     product.productNotes = _productNotes;
-    product.productPrice = _productPrice;
 
     items[_upc] = product;
     emit Designed(_upc);
@@ -170,21 +167,31 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
   function packageToy(string _upc) public onlyManufacturer manufactured(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.Packaged;
+
     emit Packaged(_upc);
   }
 
-  function sellToy(string _upc) public onlyManufacturer packaged(_upc) {
+  function sellToy(
+      string _upc,
+      uint _price
+  )
+    public
+    onlyManufacturer
+    packaged(_upc)
+  {
     Item storage product = items[_upc];
+    product.productPrice = _price;
     product.itemState = State.ForSale;
+
     emit ForSale(_upc);
   }
 
-  function buyToy(string _upc, address _retailerID, uint _price)
+  function buyToy(string _upc)
     public
+    payable
     onlyRetailer
     forSale(_upc)
-    payable
-    paidEnough(_price)
+    paidEnough(items[_upc].productPrice)
     checkValue(_upc)
   {
     Item storage product = items[_upc];
@@ -192,11 +199,11 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
     // Store product owner before it's updated
     address productOwner = product.ownerID;
 
-    product.ownerID = _retailerID;
-    product.retailerID = _retailerID;
+    product.ownerID = msg.sender;
+    product.retailerID = msg.sender;
     product.itemState = State.Sold;
 
-    productOwner.transfer(_price);
+    productOwner.transfer(msg.value);
 
     emit Sold(_upc);
   }
@@ -204,28 +211,38 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
   function shipToy(string _upc) public onlyManufacturer sold(_upc) {
     Item storage product = items[_upc];
     product.itemState = State.Shipped;
+
     emit Shipped(_upc);
   }
 
   function receiveToy(string _upc) public onlyRetailer shipped(_upc) {
     Item storage product = items[_upc];
-    product.productPrice = product.productPrice * 2;
     product.itemState = State.Received;
+
     emit Received(_upc);
   }
 
-  function stockToy(string _upc) public onlyRetailer received(_upc) {
+  function stockToy(
+      string _upc,
+      uint _price
+  )
+    public
+    onlyRetailer
+    received(_upc)
+  {
     Item storage product = items[_upc];
+    product.productPrice = _price;
     product.itemState = State.Stocked;
+
     emit Stocked(_upc);
   }
 
-  function purchaseToy(string _upc, address _consumerID, uint _price)
+  function purchaseToy(string _upc)
     public
+    payable
     onlyConsumer
     stocked(_upc)
-    payable
-    paidEnough(_price)
+    paidEnough(items[_upc].productPrice)
     checkValue(_upc)
   {
     Item storage product = items[_upc];
@@ -233,10 +250,11 @@ contract SupplyChain is Ownable, CompanyRole, ManufacturerRole, RetailerRole, Co
     // Store product owner before it's updated
     address productOwner = product.ownerID;
 
-    product.ownerID = _consumerID;
+    product.ownerID = msg.sender;
+    product.consumerID = msg.sender;
     product.itemState = State.Purchased;
 
-    productOwner.transfer(_price);
+    productOwner.transfer(msg.value);
 
     emit Purchased(_upc);
   }
