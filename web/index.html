@@ -61,11 +61,11 @@
         </div>
         <div class=form-break></div>
         <div class="form-group">
-            <h2>Manufacturer Toy</h2>
+            <h2>Manufacture Toy</h2>
             <br>
             UPC
             <br>
-            <input type="number" id="manufactureUPC" name="manufactureUPC" placeholder=1><br>
+            <input type="number" id="manufacturerUPC" name="manufacturerUPC" placeholder=1><br>
             Manufacturer ID
             <br>
             <input type="text" id="manufacturerID" name="manufacturerID" placeholder="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
@@ -85,10 +85,20 @@
             <input type="text" id="manufacturerLongitude" name="manufacturerLongitude" placeholder="144.341490"><br>
             <br>
             <button class="btn-manufacture" id="button" type="button" data-id="2">Manufacture</button>
-            <button class="btn-package" id="button" type="button" data-id="3">Package</button>
-            <button class="btn-forsale" id="button" type="button" data-id="4">Sell</button>
             <button class="btn-ship" id="button" type="button" data-id="6">Ship</button>
             <p id="manufacturerOutput" style="white-space: pre-line"></p>
+        </div>
+        <div class="form-group">
+            <h2>Package and Sell Toy</h2>
+            <br />
+            UPC
+            <br>
+            <input type="text" id="packageUPC" name="packageUPC" placeholder="042100005264"><br>
+            <div class=button-div>
+              <button class="btn-package" id="button" type="button" data-id="3">Package</button>
+              <button class="btn-forsale" id="button" type="button" data-id="4">Sell</button>
+            </div>
+            <p id="packageOutput" style="white-space: pre-line"></p>
         </div>
         <div class=form-break></div>
         <div class="form-group">
