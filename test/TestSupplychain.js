@@ -18,23 +18,22 @@ contract('SupplyChain', function(accounts) {
       const productData = await supplyChain.fetchProductData.call(upc);
       const productState = await supplyChain.fetchState.call(upc);
 
-      assert.equal(productData[0], ownerID, 'Invalid companyID');
-      assert.equal(productData[1], productID, 'Invalid productID');
-      assert.equal(productData[2], productNotes, 'Invalid productNotes');
-      assert.equal(productState, 0, 'Invalid item State');
+      assert.equal(productData[2], ownerID, 'Invalid companyID');
+      assert.equal(productData[3], productID, 'Invalid productID');
+      assert.equal(productData[4], productNotes, 'Invalid productNotes');
+      assert.equal(productState[2], 0, 'Invalid item State');
       assert.equal(event, 'Designed', 'Invalid event emitted');
     });
 
     it("Testing manufactureToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
-      const manufacturerID = accounts[2]
       const manufacturerName = "Cartamundi"
       const manufacturerInformation = "Cartamundi East Longmeadow LLC"
       const manufacturerLatitude = "-38.239770"
       const manufacturerLongitude = "144.341490"
 
       let tx = await supplyChain.manufactureToy(
-        upc, manufacturerID, manufacturerName,
+        upc, manufacturerName,
         manufacturerInformation, manufacturerLatitude, manufacturerLongitude);
       let event = tx.logs[0].event;
 
@@ -43,19 +42,19 @@ contract('SupplyChain', function(accounts) {
       const productState = await supplyChain.fetchState.call(upc);
 
       assert.equal(
-        manufacturerData[0], manufacturerID, 'Invalid manufacturerID');
+        manufacturerData[2], ownerID, 'Invalid manufacturerID');
       assert.equal(
-        manufacturerData[1], manufacturerName,
+        manufacturerData[3], manufacturerName,
         'Invalid manufacturerInformation');
       assert.equal(
-        manufacturerData[2], manufacturerInformation,
+        manufacturerData[4], manufacturerInformation,
         'Invalid manufacturerInformation');
       assert.equal(
-        manufacturerData[3], manufacturerLatitude,
+        manufacturerData[5], manufacturerLatitude,
         'Invalid manufacturerLatitude');
-      assert.equal(manufacturerData[4], manufacturerLongitude,
+      assert.equal(manufacturerData[6], manufacturerLongitude,
         'Invalid manufacturerLongitude');
-      assert.equal(productState, 1, 'Invalid item State');
+      assert.equal(productState[2], 1, 'Invalid item State');
       assert.equal(event, 'Manufactured', 'Invalid event emitted');
     });
 
@@ -67,7 +66,7 @@ contract('SupplyChain', function(accounts) {
 
       const productState = await supplyChain.fetchState.call(upc);
 
-      assert.equal(productState, 2, 'Invalid item State');
+      assert.equal(productState[2], 2, 'Invalid item State');
       assert.equal(event, 'Packaged', 'Invalid event emitted');
     });
 
@@ -80,13 +79,14 @@ contract('SupplyChain', function(accounts) {
       const productData = await supplyChain.fetchProductData.call(upc);
       const productState = await supplyChain.fetchState.call(upc);
 
-      assert.equal(productData[3], productPrice, 'Invalid productPrice');
-      assert.equal(productState, 3, 'Invalid item State');
+      assert.equal(productData[5], productPrice, 'Invalid productPrice');
+      assert.equal(productState[2], 3, 'Invalid item State');
       assert.equal(event, 'ForSale', 'Invalid event emitted');
     });
 
     it("Testing buyToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
+      const retailerID = accounts[1];
       const underpaidPrice = web3.toWei(.5, "ether")
 
       let errorThrown;
@@ -102,17 +102,18 @@ contract('SupplyChain', function(accounts) {
         errorThrown.message.search('Not Paid Enough'),
         -1, 'Revert error not thrown for not paying enough');
 
-      const balanceBeforeTransaction = web3.eth.getBalance(ownerID);
+      await supplyChain.addRetailer(retailerID);
+      const balanceBeforeTransaction = web3.eth.getBalance(retailerID);
       let tx = await supplyChain.buyToy(
-        upc, {value: productPrice, gasPrice: 0});
-      const balanceAfterTransaction = web3.eth.getBalance(ownerID);
+        upc, {from: retailerID, value: productPrice, gasPrice: 0});
+      const balanceAfterTransaction = web3.eth.getBalance(retailerID);
       let event = tx.logs[0].event;
 
       const productState = await supplyChain.fetchState.call(upc);
 
       assert.equal(
           balanceBeforeTransaction.sub(balanceAfterTransaction), productPrice);
-      assert.equal(productState, 4, 'Invalid item State');
+      assert.equal(productState[2], 4, 'Invalid item State');
       assert.equal(event, 'Sold', 'Invalid event emitted');
     });
 
@@ -124,7 +125,7 @@ contract('SupplyChain', function(accounts) {
 
       const productState = await supplyChain.fetchState.call(upc);
 
-      assert.equal(productState, 5, 'Invalid item State');
+      assert.equal(productState[2], 5, 'Invalid item State');
       assert.equal(event, 'Shipped', 'Invalid event emitted');
     });
 
@@ -136,7 +137,7 @@ contract('SupplyChain', function(accounts) {
 
       const productState = await supplyChain.fetchState.call(upc);
 
-      assert.equal(productState, 6, 'Invalid item State');
+      assert.equal(productState[2], 6, 'Invalid item State');
       assert.equal(event, 'Received', 'Invalid event emitted');
     });
 
@@ -148,16 +149,16 @@ contract('SupplyChain', function(accounts) {
       let event = tx.logs[0].event;
 
       const productData = await supplyChain.fetchProductData.call(upc);
-      const productState = await supplyChain.fetchState.call(upc);
+      const productState = await supplyChain.fetchState.call(upc)
 
-      assert.equal(productData[3], consumerPrice, 'Invalid productPrice');
-      assert.equal(productState, 7, 'Invalid item State');
+      assert.equal(productData[5], consumerPrice, 'Invalid productPrice');
+      assert.equal(productState[2], 7, 'Invalid item State');
       assert.equal(event, 'Stocked', 'Invalid event emitted');
     });
 
     it("Testing purchaseToy()", async() => {
       const supplyChain = await SupplyChain.deployed();
-      const consumerID = accounts[4]
+      const consumerID = accounts[2]
       const consumerPrice = productPrice * 2;
       const underpaidPrice = web3.toWei(1, "ether")
 
@@ -176,18 +177,18 @@ contract('SupplyChain', function(accounts) {
         -1, 'Revert error not thrown for not paying enough');
 
       await supplyChain.addConsumer(consumerID);
-      const balanceBeforeTransaction = web3.eth.getBalance(ownerID);
+      const balanceBeforeTransaction = web3.eth.getBalance(consumerID);
       let tx = await supplyChain.purchaseToy(
         upc, {from: consumerID, value: consumerPrice, gasPrice: 0});
-      const balanceAfterTransaction = web3.eth.getBalance(ownerID);
+      const balanceAfterTransaction = web3.eth.getBalance(consumerID);
       let event = tx.logs[0].event;
 
       const productState = await supplyChain.fetchState.call(upc);
 
       assert.equal(
-        balanceAfterTransaction.sub(balanceBeforeTransaction),
+        balanceBeforeTransaction.sub(balanceAfterTransaction),
         consumerPrice);
-      assert.equal(productState, 8, 'Invalid item State');
+      assert.equal(productState[2], 8, 'Invalid item State');
       assert.equal(event, 'Purchased', 'Invalid event emitted');
     });
 });
