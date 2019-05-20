@@ -1,6 +1,8 @@
 ToyChain
 ========
 
+![toychain](screenshots/toychain.png?raw=true)
+
 About
 -----
 
@@ -75,6 +77,7 @@ Development Requirements
 ------------------------
 * Truffle
 * Ganache
+* Infura
 
 Install & Run
 -------------
@@ -84,11 +87,38 @@ Install & Run
 
 Screenshot
 ----------
-
+![toychain_transactions](screenshots/toychain_transactions.png?raw=true)
 
 Code Organization
 -----------------
 ```console
+contracts/
+├── Migrations.sol
+├── access_control
+│   ├── CompanyRole.sol
+│   ├── ConsumerRole.sol
+│   ├── ManufacturerRole.sol
+│   ├── RetailerRole.sol
+│   └── Roles.sol
+├── base
+│   └── SupplyChain.sol
+└── core
+    └── Ownable.sol
+test/
+├── TestCompanyRole.js
+├── TestConsumerRole.js
+├── TestManufacturerRole.js
+├── TestRetailerRole.js
+└── TestSupplychain.js
+web/
+├── css
+│   └── style.css
+├── images
+│   ├── ethereum.png
+├── index.html
+└── js
+    ├── app.js
+    └── truffle-contract.js
 ```
 
 Grading (by Udacity)
