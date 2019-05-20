@@ -411,7 +411,7 @@ App = {
           output = `
             UPC: ${upc}
             SKU: ${sku}
-            Product State: ${state}
+            Toy State: ${state}
           `;
           $("#fetchOutput").text(output);
           console.log('fetchState', result);
@@ -429,9 +429,9 @@ App = {
             UPC: ${upc}
             SKU: ${sku}
             Company ID: ${companyID}
-            Product ID: ${productID}
-            Product Notes: ${productNotes}
-            Product Price: ${productPrice} ETH
+            Toy ID: ${productID}
+            Toy Notes: ${productNotes}
+            Toy Price: ${productPrice} ETH
             `
           $("#fetchOutput").text(output);
           console.log('fetchProductData', result);
