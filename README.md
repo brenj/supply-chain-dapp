@@ -113,8 +113,8 @@ Grading (by Udacity)
 
 Criteria                  |Highest Grade Possible  |Grade Recieved
 --------------------------|------------------------|--------------------
-Write Up                  |Meets Specifications    |
-Write Smart Contracts     |Meets Specifications    |
-Test Smart Contract       |Meets Specifications    |
-Deploy Smart Contract     |Meets Specifications    |
-Modify Client Code        |Meets Specifications    |
+Write Up                  |Meets Specifications    |Meets Specifications
+Write Smart Contracts     |Meets Specifications    |Meets Specifications
+Test Smart Contract       |Meets Specifications    |Meets Specifications
+Deploy Smart Contract     |Meets Specifications    |Meets Specifications
+Modify Client Code        |Meets Specifications    |Meets Specifications
