@@ -7,7 +7,7 @@ About
 -----
 
 Project:
-`Ethereum Dapp for Tracking Toys through Supply Chain`
+`Ethereum Dapp for Tracking Toys through a Supply Chain`
 
 From Udacity:
 > Learn how to manage and audit blockchain product ownership as the product is transferred down the supply chain. Improve your notarization service with a smart contract to support transferring of ownership, product auditing, and supply chain management.
