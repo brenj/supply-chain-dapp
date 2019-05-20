@@ -6,7 +6,7 @@ ToyChain
 About
 -----
 
-Project:  
+Project:
 `Ethereum Dapp for Tracking Items through Supply Chain`
 
 From Udacity:
@@ -27,34 +27,22 @@ UML Diagrams
 Deployment to Rinkeby
 ---------------------
 ```console
-$> truffle migrate --network rinkeby
-Using network 'rinkeby'.                                                 
-                                    
-Running migration: 1_initial_migration.js                                
-  Deploying Migrations...           
-  ... 0xb36330460c27d1ab9691e725a4144a32d5e3948acb06eae54b26b3805e57925d 
-  Migrations: 0x701bc8773b136d3d63c891a18fdbd60c461e349b
+$> truffle migrate --reset --network rinkeby
+Using network 'rinkeby'.
+
+Running migration: 1_initial_migration.js
+  Replacing Migrations...
+  ... 0xfe251985cceae4ef6672d027004f8d13529f93e153da82ae66c00c184d7d9591
+  Migrations: 0xc016a3face3aee926613c07a6a7eb9a0736d3b94
 Saving successful migration to network...
-  ... 0xf6469f5c2efd86b1c9309a71a27b0b69c1079df992e5bdbf261e2772cdef5a98
+  ... 0xeeaeef14e6cb69e5da3f1e4b88ce9ea8a551c81c2717498e4d7704f8bb4d9d6b
 Saving artifacts...
 Running migration: 2_deploy_contracts.js
-  Replacing CompanyRole...
-  ... 0x98c52dea28608f592e9ef37423e2a61b52df3c73439f243620be395c911dee72
-  CompanyRole: 0x43fb35ae4b836c5017f85f5234846a77fce57067
-  Replacing ManufacturerRole...
-  ... 0x5a7e76640909724022124ba1e73605f716346d79cc572c57a042762f2c7e92f4
-  ManufacturerRole: 0x8de69084ff86a3c9b799cdc33feae7458f826c5a
-  Replacing RetailerRole...
-  ... 0x5cdfba9acb84ee3ff3729df139b0b702302ce042f75fde829515b75766361241
-  RetailerRole: 0x6737f436ee8701f96117ca97c6e3ba4047f9674a
-  Replacing ConsumerRole...
-  ... 0xca4f55ac81d2da1b7c88257967ec317d7b40957b4021e1090495138e292e2193
-  ConsumerRole: 0x707fccf6ebb9c690e2ee1a29ef5aa807a1732cc9
   Replacing SupplyChain...
-  ... 0x12e5e50f1639c9cfeb37db44e4a5c57b9b0aa363831c0446a9b1e6d1c4161ffb
-  SupplyChain: 0x85d20d4bfb2ec672df87272fcb284c8113f75670
+  ... 0x28c096ea2a24f6256c1649d11cd50d10d79005561929ccadddca268ecb439443
+  SupplyChain: 0x4bd3f18ef05c4d1f74cbb604620ccb54bcf020f4
 Saving successful migration to network...
-  ... 0xec41215bb5e415b94c75345dad0ed22cefdc06b5334207145492b744a8ae3ab1
+  ... 0xd0140d165399cf348f45084ac0c9b7cffb36ee4526df32ad04f637bd50d35379
 Saving artifacts...
 
 $> truffle networks
@@ -63,18 +51,15 @@ Network: rinkeby (id: 4)
   CompanyRole: 0x43fb35ae4b836c5017f85f5234846a77fce57067
   ConsumerRole: 0x707fccf6ebb9c690e2ee1a29ef5aa807a1732cc9
   ManufacturerRole: 0x8de69084ff86a3c9b799cdc33feae7458f826c5a
-  Migrations: 0x701bc8773b136d3d63c891a18fdbd60c461e349b
+  Migrations: 0xc016a3face3aee926613c07a6a7eb9a0736d3b94
   RetailerRole: 0x6737f436ee8701f96117ca97c6e3ba4047f9674a
-  SupplyChain: 0x85d20d4bfb2ec672df87272fcb284c8113f75670
+  SupplyChain: 0x4bd3f18ef05c4d1f74cbb604620ccb54bcf020f4
 ```
 
 Requirements
 ------------
 * Node
 * Node Package Manager (npm)
-
-Development Requirements
-------------------------
 * Truffle
 * Ganache
 * Infura
@@ -104,12 +89,14 @@ contracts/
 │   └── SupplyChain.sol
 └── core
     └── Ownable.sol
+
 test/
 ├── TestCompanyRole.js
 ├── TestConsumerRole.js
 ├── TestManufacturerRole.js
 ├── TestRetailerRole.js
 └── TestSupplychain.js
+
 web/
 ├── css
 │   └── style.css
