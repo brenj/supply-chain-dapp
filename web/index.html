@@ -6,13 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToyChain</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/style.css">
 </head>
 
 <body>
     <div class="container-title">
-        <h1>ToyChain</h1>
-        <p style="font-style: italic">Prove the authenticity of toys using the Ethereum blockchain</p>
+        <img src="images/ethereum.png" alt="Ethereum Logo" style="float:left;width:100px;height:100;">
+        <h1 class="logo">ToyChain</h1>
+        <span style="font-style: italic">Prove the authenticity of toys using the Ethereum blockchain</span>
         <hr>
     </div>
 
@@ -24,9 +26,9 @@
             <br>
             <input type="text" id="fetchUPC" name="fetchUPC" placeholder="042100005264"><br>
             <div class=button-div>
-                <button class="btn-fetchState" id="button" type="button" data-id="10">Fetch State</button>
-                <button class="btn-fetchProductData" id="button" type="button" data-id="11">Fetch Product Data</button>
-                <button class="btn-fetchManufacturerData" id="button" type="button" data-id="12">Fetch Manufacturer Data</button>
+                <button class="btn-fetchState" id="button" type="button" data-id="10">Toy State</button>
+                <button class="btn-fetchProductData" id="button" type="button" data-id="11">Toy Details</button>
+                <button class="btn-fetchManufacturerData" id="button" type="button" data-id="12">Toy Manufacturer</button>
             </div>
             <p id="fetchOutput" style="white-space: pre-line"></p>
         </div>
@@ -40,22 +42,14 @@
             SKU
             <br>
             <input type="text" id="designSKU" name="designSKU" placeholder="MTG-BOX-G123-WSP"><br>
-            Company ID
-            <br>
-            <input type="text" id="companyID" name="companyID" placeholder="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
-                size="50"><br>
             Product ID
             <br>
-            <input type="number" id="productID" name="productID" placeholder="100"
+            <input type="number" id="productID" name="productID" placeholder="1000"
                 size="50"><br>
             Product Notes
             <br>
             <input type="text" id="productNotes" name="productNotes" placeholder="Magic: The Gathering, War of the Spark Booster Box"
                 size="50"><br>
-            Product Price
-            <br>
-            <input type="number" id="productPrice" name="productPrice" placeholder="1"
-                size="50"> ETH<br>
             <button class="btn-design" id="button" type="button" data-id="1">Design</button>
             <p id="designOutput" style="white-space: pre-line"></p>
         </div>
@@ -66,10 +60,6 @@
             UPC
             <br>
             <input type="number" id="manufacturerUPC" name="manufacturerUPC" placeholder=1><br>
-            Manufacturer ID
-            <br>
-            <input type="text" id="manufacturerID" name="manufacturerID" placeholder="0x99c289eb2aacec289631a5ddf62cf27a63d4494f"
-                size="50"><br>
             Manufacturer Name
             <br>
             <input type="text" id="manufacturerName" name="manufacturerName" placeholder="Cartamundi">
@@ -85,56 +75,109 @@
             <input type="text" id="manufacturerLongitude" name="manufacturerLongitude" placeholder="144.341490"><br>
             <br>
             <button class="btn-manufacture" id="button" type="button" data-id="2">Manufacture</button>
-            <button class="btn-ship" id="button" type="button" data-id="6">Ship</button>
             <p id="manufacturerOutput" style="white-space: pre-line"></p>
         </div>
+        <div class=form-break></div>
         <div class="form-group">
-            <h2>Package and Sell Toy</h2>
+            <h2>Package Toy</h2>
             <br />
             UPC
             <br>
             <input type="text" id="packageUPC" name="packageUPC" placeholder="042100005264"><br>
             <div class=button-div>
               <button class="btn-package" id="button" type="button" data-id="3">Package</button>
-              <button class="btn-forsale" id="button" type="button" data-id="4">Sell</button>
             </div>
             <p id="packageOutput" style="white-space: pre-line"></p>
         </div>
         <div class=form-break></div>
         <div class="form-group">
-            <h2>Retailer Details</h2>
+            <h2>Sell Toy</h2>
+            <br />
+            UPC
             <br>
-            Product Notes
+            <input type="text" id="sellUPC" name="sellUPC" placeholder="042100005264"><br>
+            Wholesale Price
             <br>
-            <input type="text" id="productNotes" name="productNotes" value="Magic: The Gathering, War of the Spark Booster Box" size="60"><br>
-            Product Price
-            <br>
-            <input type="number" id="productPrice" name="productPrice" value=1> ETH<br>
-            Company ID
-            <br>
-            <input type="text" id="companyID" name="companyID" value="0xf1b1bcd24dad92303dd9fe78be639f7bcf9c238d" size="50"><br>
-            Manufacturer ID
-            <br>
-            <input type="text" id="manufacturerID" name="manufacturerID" value="0xf1b1bcd24dad92303dd9fe78be639f7bcf9c238d"
-                size="50">
-            <br>
-            Retailer ID
-            <br>
-            <input type="text" id="retailerID" name="retailerID" value="0x0fb2bfefd526966c87efa19f6693d50971763fc2"
-                size="50"><br>
-            Consumer ID
-            <br>
-            <input type="text" id="consumerID" name="consumerID" value="0x5d777e9127b28fb119e81a6304278a0a21bef1c4"
-                size="50"><br>
-            <br>
-            <button class="btn-buy" id="button" type="button" data-id="5">Buy</button>
-            <button class="btn-receive" id="button" type="button" data-id="7">Receive</button>
-            <button class="btn-stock" id="button" type="button" data-id="8"> Stock</button>
-            <button class="btn-purchase" id="button" type="button" data-id="9">Purchase</button>
-            <p id="manufacturerOutput" style="white-space: pre-line"></p>
+            <input type="number" id="sellPrice" name="sellPrice" placeholder=1> ETH<br>
+            <div class=button-div>
+              <button class="btn-forsale" id="button" type="button" data-id="4">Sell</button>
+            </div>
+            <p id="sellOutput" style="white-space: pre-line"></p>
         </div>
         <div class=form-break></div>
-        <hr>
+        <div class="form-group">
+            <h2>Buy Toy</h2>
+            <br />
+            UPC
+            <br>
+            <input type="text" id="buyUPC" name="buyUPC" placeholder="042100005264"><br>
+            <div class=button-div>
+              <button class="btn-package" id="button" type="button" data-id="5">Buy</button>
+            </div>
+            <p id="buyOutput" style="white-space: pre-line"></p>
+        </div>
+        <div class=form-break></div>
+        <div class="form-group">
+            <h2>Ship Toy</h2>
+            <br />
+            UPC
+            <br>
+            <input type="text" id="shipUPC" name="shipUPC" placeholder="042100005264"><br>
+            <div class=button-div>
+              <button class="btn-ship" id="button" type="button" data-id="6">Ship</button>
+            </div>
+            <p id="shipOutput" style="white-space: pre-line"></p>
+        </div>
+        <div class=form-break></div>
+        <div class="form-group">
+            <h2>Receive Toy</h2>
+            <br />
+            UPC
+            <br>
+            <input type="text" id="receiveUPC" name="receiveUPC" placeholder="042100005264"><br>
+            <div class=button-div>
+              <button class="btn-ship" id="button" type="button" data-id="7">Receive</button>
+            </div>
+            <p id="receiveOutput" style="white-space: pre-line"></p>
+        </div>
+        <div class=form-break></div>
+        <div class="form-group">
+            <h2>Stock Toy</h2>
+            <br />
+            UPC
+            <br>
+            <input type="text" id="stockUPC" name="stockUPC" placeholder="042100005264"><br>
+            Retail Price
+            <br>
+            <input type="number" id="retailPrice" name="retailPrice" placeholder=2> ETH<br>
+            <div class=button-div>
+              <button class="btn-stock" id="button" type="button" data-id="8">Stock</button>
+            </div>
+            <p id="stockOutput" style="white-space: pre-line"></p>
+        </div>
+        <div class=form-break></div>
+        <div class="form-group">
+            <h2>Purchase Toy</h2>
+            <br />
+            UPC
+            <br>
+            <input type="text" id="purchaseUPC" name="purchaseUPC" placeholder="042100005264"><br>
+            <div class=button-div>
+              <button class="btn-purchase" id="button" type="button" data-id="9">Purchase</button>
+            </div>
+            <p id="purchaseOutput" style="white-space: pre-line"></p>
+        </div>
+        <div class=form-break></div>
+
+        <h2>Transaction History</h2>
+        <div>
+          <ul id="transactionHistory">
+            <!-- Events will appear here from app.js -->
+          </ul>
+          <br>
+          <hr>
+        </div>
+
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

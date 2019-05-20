@@ -1,45 +1,51 @@
 App = {
     web3Provider: null,
     contracts: {},
-    metamaskAccountID: "0x0000000000000000000000000000000000000000",
-    upc: 0,
-    companyID: "0x0000000000000000000000000000000000000000",
-    manufacturerID: "0x0000000000000000000000000000000000000000",
-    retailerID: "0x0000000000000000000000000000000000000000",
-    consumerID: "0x0000000000000000000000000000000000000000",
-    manufacturerName: null,
-    manufacturerInformation: null,
-    manufacturerLatitude: null,
-    manufacturerLongitude: null,
-    productNotes: null,
-    productPrice: 0,
 
     init: async function () {
-        /// Setup access to blockchain
+        // Setup access to blockchain
         return await App.initWeb3();
     },
 
     readForm: function () {
+        // Toy Details
         App.fetchUPC = $("#fetchUPC").val();
 
+        // Design Toy
         App.designUPC = $("#designUPC").val();
         App.designSKU = $("#designSKU").val();
-        App.companyID = $("#companyID").val();
         App.productID = $("#productID").val();
         App.productNotes = $("#productNotes").val();
-        App.productPrice = $("#productPrice").val();
 
+        // Manufacture Toy
         App.manufacturerUPC = $("#manufacturerUPC").val();
-        App.manufacturerID = $("#manufacturerID").val();
         App.manufacturerName = $("#manufacturerName").val();
         App.manufacturerInformation = $("#manufacturerInformation").val();
         App.manufacturerLatitude = $("#manufacturerLatitude").val();
         App.manufacturerLongitude = $("#manufacturerLongitude").val();
 
+        // Package Toy
         App.packageUPC = $("#packageUPC").val();
 
-        App.retailerID = $("#retailerID").val();
-        App.consumerID = $("#consumerID").val();
+        // Sell Toy
+        App.sellUPC = $("#sellUPC").val();
+        App.sellPrice = $("#sellPrice").val();
+
+        // Buy Toy
+        App.buyUPC = $("#buyUPC").val();
+
+        // Ship Toy
+        App.shipUPC = $("#shipUPC").val();
+
+        // Receive Toy
+        App.receiveUPC = $("#receiveUPC").val();
+
+        // Stock Toy
+        App.stockUPC = $("#stockUPC").val();
+        App.retailPrice = $("#retailPrice").val();
+
+        // Purchase Toy
+        App.purchaseUPC = $("#purchaseUPC").val();
     },
 
     initWeb3: async function () {
@@ -80,8 +86,6 @@ App = {
                 return;
             }
             console.log('getMetaskID:',res);
-            App.metamaskAccountID = res[0];
-
         })
     },
 
@@ -95,6 +99,8 @@ App = {
             var SupplyChainArtifact = data;
             App.contracts.SupplyChain = TruffleContract(SupplyChainArtifact);
             App.contracts.SupplyChain.setProvider(App.web3Provider);
+
+            App.fetchEvents();
         });
 
         return App.bindEvents();
@@ -162,17 +168,21 @@ App = {
             return instance.designToy(
                 App.designUPC, 
                 App.designSKU, 
-                App.companyID,
                 App.productID,
-                App.productNotes,
-                App.productPrice
+                App.productNotes
             );
         }).then(function(result) {
-          designOutput = `
-            ✓ TOY DESIGNED
-            Transaction: ${result['logs'][0]['transactionHash']}
-          `;
+            designOutput = `
+              ✓ TOY DESIGNED
+              Transaction: ${result['logs'][0]['transactionHash']}
+            `;
             $("#designOutput").text(designOutput);
+
+            $("#designUPC").val('');
+            $("#designSKU").val('');
+            $("#productID").val('');
+            $("#productNotes").val('');
+
             console.log('designToy',result);
         }).catch(function(err) {
           designError = `
@@ -181,13 +191,6 @@ App = {
           `;
             $("#designOutput").text(designError);
             console.log(err.message);
-        }).finally(function() {
-            $("#designUPC").val('');
-            $("#designSKU").val('');
-            $("#companyID").val('');
-            $("#productID").val('');
-            $("#productNotes").val('');
-            $("#productPrice").val('');
         });
     },
 
@@ -197,15 +200,22 @@ App = {
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
           return instance.manufactureToy(
-            App.manufacturerUPC, App.manufacturerID, App.manufacturerName,
+            App.manufacturerUPC, App.manufacturerName,
             App.manufacturerInformation, App.manufacturerLatitude,
             App.manufacturerLongitude);
         }).then(function(result) {
           manufactureOutput = `
-            ✓ TOY MANUFACTURED
-            Transaction: ${result['logs'][0]['transactionHash']}
-          `;
+              ✓ TOY MANUFACTURED
+              Transaction: ${result['logs'][0]['transactionHash']}
+            `;
             $("#manufacturerOutput").text(manufactureOutput);
+
+            $("#manufacturerUPC").val('');
+            $("#manufacturerName").val('');
+            $("#manufacturerInformation").val('');
+            $("#manufacturerLatitude").val('');
+            $("#manufacturerLongitude").val('');
+
             console.log('manufactureToy',result);
         }).catch(function(err) {
             manufactureError = `
@@ -214,13 +224,6 @@ App = {
             `;
             $("#manufacturerOutput").text(manufactureError);
             console.log(err.message);
-        }).finally(function() {
-            $("#manufacturerUPC").val('');
-            $("#manufacturerID").val('');
-            $("#manufacturerName").val('');
-            $("#manufacturerInformation").val('');
-            $("#manufacturerLatitude").val('');
-            $("#manufacturerLongitude").val('');
         });
     },
     
@@ -236,6 +239,8 @@ App = {
               Transaction: ${result['logs'][0]['transactionHash']}
             `;
             $("#packageOutput").text(packageOutput);
+            $("#packageUPC").val('');
+
             console.log('packageToy',result);
         }).catch(function(err) {
             packageError = `
@@ -252,20 +257,24 @@ App = {
         var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-            return instance.sellToy(App.packageUPC);
+            console.log(App.sellUPC, App.sellPrice);
+            return instance.sellToy(App.sellUPC, App.sellPrice);
         }).then(function(result) {
             sellOutput = `
               ✓ TOY PUT UP FOR SALE
               Transaction: ${result['logs'][0]['transactionHash']}
             `;
-            $("#packageOutput").text(sellOutput);
+            $("#sellOutput").text(sellOutput);
+            $("#sellUPC").val('');
+            $("#sellPrice").val('');
+
             console.log('sellToy',result);
         }).catch(function(err) {
             sellError = `
               ✗ TOY NOT PUT UP FOR SALE
               See console logs for details
             `;
-            $("#packageOutput").text(sellError);
+            $("#sellOutput").text(sellError);
             console.log(err.message);
         });
     },
@@ -276,11 +285,21 @@ App = {
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
             const walletValue = web3.toWei(3, "ether");
-            return instance.buyToy(App.upc, {from: App.metamaskAccountID, value: walletValue});
+            return instance.buyToy(App.buyUPC, {value: walletValue});
         }).then(function(result) {
-            $("#ftc-item").text(result);
+            buyOutput = `
+              ✓ TOY BOUGHT
+              Transaction: ${result['logs'][0]['transactionHash']}
+            `;
+            $("#buyOutput").text(buyOutput);
+            $("#buyUPC").val('');
             console.log('buyToy',result);
         }).catch(function(err) {
+            buyError = `
+              ✗ TOY NOT BOUGHT
+              See console logs for details
+            `;
+            $("#buyOutput").text(buyError);
             console.log(err.message);
         });
     },
@@ -290,11 +309,21 @@ App = {
         var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-            return instance.shipToy(App.upc, {from: App.metamaskAccountID});
+            return instance.shipToy(App.shipUPC);
         }).then(function(result) {
-            $("#ftc-item").text(result);
+            shipOutput = `
+              ✓ TOY SHIPPED
+              Transaction: ${result['logs'][0]['transactionHash']}
+            `;
+            $("#shipOutput").text(shipOutput);
+            $("#shipUPC").val('');
             console.log('shipToy',result);
         }).catch(function(err) {
+            buyError = `
+              ✗ TOY NOT SHIPPED
+              See console logs for details
+            `;
+            $("#shipOutput").text(shipError);
             console.log(err.message);
         });
     },
@@ -304,11 +333,21 @@ App = {
         var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-            return instance.receiveToy(App.upc, {from: App.metamaskAccountID});
+            return instance.receiveToy(App.receiveUPC);
         }).then(function(result) {
-            $("#ftc-item").text(result);
+            receiveOutput = `
+              ✓ TOY RECEIVED
+              Transaction: ${result['logs'][0]['transactionHash']}
+            `;
+            $("#receiveOutput").text(receiveOutput);
+            $("#receiveUPC").val('');
             console.log('receiveToy',result);
         }).catch(function(err) {
+            receiveError = `
+              ✗ TOY NOT RECEIVED
+              See console logs for details
+            `;
+            $("#shipOutput").text(receiveError);
             console.log(err.message);
         });
     },
@@ -318,11 +357,21 @@ App = {
         var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-            return instance.stockToy(App.upc, {from: App.metamaskAccountID});
+            return instance.stockToy(App.stockUPC, App.retailPrice);
         }).then(function(result) {
-            $("#ftc-item").text(result);
+             stockOutput = `
+              ✓ TOY STOCKED
+              Transaction: ${result['logs'][0]['transactionHash']}
+            `;
+            $("#stockOutput").text(stockOutput);
+            $("#stockUPC").val('');
             console.log('stockToy',result);
         }).catch(function(err) {
+            stockError = `
+              ✗ TOY NOT STOCKED
+              See console logs for details
+            `;
+            $("#shipOutput").text(stockError);
             console.log(err.message);
         });
     },
@@ -332,24 +381,37 @@ App = {
         var processId = parseInt($(event.target).data('id'));
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
-            return instance.purchaseToy(App.upc, {from: App.metamaskAccountID});
+            const walletValue = web3.toWei(3, "ether");
+            return instance.purchaseToy(App.purchaseUPC, {value: walletValue});
         }).then(function(result) {
-            $("#ftc-item").text(result);
+            purchaseOutput = `
+              ✓ TOY PURCHASED
+              Transaction: ${result['logs'][0]['transactionHash']}
+            `;
+            $("#purchaseOutput").text(purchaseOutput);
+            $("#purchaseUPC").val('');
             console.log('purchaseToy',result);
         }).catch(function(err) {
             console.log(err.message);
+            purchaseError = `
+              ✗ TOY NOT PURCHASED
+              See console logs for details
+            `;
+            $("#purchaseOutput").text(purchaseError);
         });
     },
 
     fetchState: function () {
-        App.upc = $('#fetchUPC').val();
         console.log('upc',App.fetchUPC);
 
         App.contracts.SupplyChain.deployed().then(function(instance) {
           return instance.fetchState(App.fetchUPC);
         }).then(function(result) {
+          let [upc, sku, state] = result;
           output = `
-            Product State: ${result}
+            UPC: ${upc}
+            SKU: ${sku}
+            Product State: ${state}
           `;
           $("#fetchOutput").text(output);
           console.log('fetchState', result);
@@ -362,8 +424,10 @@ App = {
         App.contracts.SupplyChain.deployed().then(function(instance) {
           return instance.fetchProductData.call(App.fetchUPC);
         }).then(function(result) {
-          let [companyID, productID, productNotes, productPrice] = result;
+          let [upc, sku, companyID, productID, productNotes, productPrice] = result;
           let output = `
+            UPC: ${upc}
+            SKU: ${sku}
             Company ID: ${companyID}
             Product ID: ${productID}
             Product Notes: ${productNotes}
@@ -380,8 +444,10 @@ App = {
         App.contracts.SupplyChain.deployed().then(function(instance) {
           return instance.fetchManufacturerData.call(App.fetchUPC);
         }).then(function(result) {
-          let [manufacturerID, manufacturerName, manufacturerInformation, manufacturerLatitude, manufacturerLongitude] = result;
+          let [upc, sku, manufacturerID, manufacturerName, manufacturerInformation, manufacturerLatitude, manufacturerLongitude] = result;
           let output = `
+            UPC: ${upc}
+            SKU: ${sku}
             Manufacturer ID: ${manufacturerID}
             Manufacturer Name: ${manufacturerName}
             Manufacturer Information: ${manufacturerInformation}
@@ -408,7 +474,7 @@ App = {
         App.contracts.SupplyChain.deployed().then(function(instance) {
         var events = instance.allEvents(function(err, log){
           if (!err)
-            $("#ftc-events").append('<li>' + log.event + ' - ' + log.transactionHash + '</li>');
+            $("#transactionHistory").append('<li>' + log.event + ' - ' + log.transactionHash + '</li>');
         });
         }).catch(function(err) {
           console.log(err.message);

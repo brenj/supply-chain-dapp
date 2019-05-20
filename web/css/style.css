@@ -9,9 +9,24 @@ body {
   margin: 25px auto;
 }
 
+h1 {
+  margin: 0px;
+  padding: 0px;
+}
+h1.page-header {
+  margin: 0;
+  padding: 0;
+}
+
 .container-title {
   width: 80%;
   margin: 25px auto;
+  padding-bottom: 10px;
+}
+
+.logo {
+  font-family: 'Lobster', cursive;
+  font-size: 50px;
 }
 
 .bold { 
